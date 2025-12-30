@@ -548,6 +548,7 @@ jobs:
       
       - name: 其他配置项
         run: |
+          cd kernel_workspace
           echo "CONFIG_TMPFS_XATTR=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_TMPFS_POSIX_ACL=y" >> ./common/arch/arm64/configs/gki_defconfig
           if [[ "${{ github.event.inputs.lz4kd_enable }}" == "true" ]]; then
@@ -944,6 +945,7 @@ jobs:
 
     
       
+
 
 
 
