@@ -155,18 +155,20 @@ jobs:
       ksutype: ${{ steps.init.outputs.ksutype }}
       kernel_description: ${{ steps.init.outputs.kernel_description }}
     steps:
-      - name: 初始化 - 读取 kernel 版本映射信息存为变量
-        id: init
+      - name: 安装环境依赖+初始化源码仓库及llvm-Clang18工具链 (内核版本 ${{ github.event.inputs.kernel_version }})
         env: 
-          KSU_TYPE: ${{ github.event.inputs.ksu_type }} # 默认从输入值读取
-          CURRENT_CCACHE_RESTORE_KEY: ""
-          CURRENT_KERNEL_URL: ""
-          CURRENT_BUILD_HOSTNAME: ""
-          CURRENT_BUILD_USERNAME: ""
+            KSU_TYPENAME: ${{ github.event.inputs.ksu_type }} # 默认从输入值读取
+            CURRENT_CCACHE_RESTORE_KEY: ""
+            CURRENT_KERNEL_URL: ""
+            CURRENT_BUILD_HOSTNAME: ""
+            CURRENT_BUILD_USERNAME: ""
         run: |
-          # sudo apt update && sudo apt-get install -y --no-install-recommends jq # 好像原本就有jq?
+          rm -rf kernel_workspace
+          mkdir kernel_workspace
+          cd kernel_workspace
+
           export KERNEL_VERSION=${{ github.event.inputs.kernel_version }}
-          case "$KSU_TYPE" in
+          case "${{ github.event.inputs.ksu_type }}" in
             sukisu)   KSU_TYPENAME="SukiSU" ;;
             resukisu) KSU_TYPENAME="ReSukiSU" ;;
             ksunext)  KSU_TYPENAME="KSUNext" ;;
@@ -177,26 +179,23 @@ jobs:
           esac
           echo "KSU_TYPENAME=$KSU_TYPENAME" >> "$GITHUB_ENV"
           echo "ksutype=$KSU_TYPENAME" >> "$GITHUB_OUTPUT"
-          rm -rf kernel_workspace
-          mkdir kernel_workspace
-          cd kernel_workspace
+
           echo "$KERNEL_MAP" > kernel_map.json
+
           CURRENT_KERNEL_URL=$(jq -r --arg ver "$KERNEL_VERSION" '.[$ver].url' kernel_map.json)
           CURRENT_CCACHE_RESTORE_KEY=$(jq -r --arg ver "$KERNEL_VERSION" '.[$ver].ccache_restore_key' kernel_map.json)
           CURRENT_KERNEL_DESCRIPTION=$(jq -r --arg ver "$KERNEL_VERSION" '.[$ver].description' kernel_map.json)
+
           echo "CURRENT_KERNEL_URL=$CURRENT_KERNEL_URL" >> $GITHUB_ENV
           echo "CURRENT_CCACHE_RESTORE_KEY=$CURRENT_CCACHE_RESTORE_KEY" >> $GITHUB_ENV
-          echo "Kernel URL: $CURRENT_KERNEL_URL"
-          echo "Ccache Key: $CURRENT_CCACHE_RESTORE_KEY"
-          IFS='@' read -r CURRENT_BUILD_USERNAME CURRENT_BUILD_HOSTNAME <<< "$str"
+
+          IFS='@' read -r CURRENT_BUILD_USERNAME CURRENT_BUILD_HOSTNAME <<< "${{ github.event.inputs.kernel_buiider }}"
           echo "CURRENT_BUILD_USERNAME=$CURRENT_BUILD_USERNAME" >> $GITHUB_ENV
           echo "CURRENT_BUILD_HOSTNAME=$CURRENT_BUILD_HOSTNAME" >> $GITHUB_ENV
           echo "kernel_description=$CURRENT_KERNEL_DESCRIPTION" >> "$GITHUB_OUTPUT"
+          echo "Kernel URL: $CURRENT_KERNEL_URL"
+          echo "Ccache Key: $CURRENT_CCACHE_RESTORE_KEY"
 
-
-      - name: 安装环境依赖+初始化源码仓库及llvm-Clang18工具链
-        run: |
-          cd kernel_workspace
           sudo apt-mark hold firefox &&
           sudo apt-mark hold libc-bin &&
           sudo apt purge man-db &&
@@ -847,22 +846,13 @@ jobs:
             echo "未找到内核镜像文件，构建可能出错"
             exit 1
           fi
-          if [[ ${{ github.event.inputs.ksu_type }} == "sukisu" ]]; then
-            KSU_TYPENAME="SukiSU"
-          elif [[ ${{ github.event.inputs.ksu_type }} == "ksunext" ]]; then
-            KSU_TYPENAME="KSUNext"
-          elif [[ ${{ github.event.inputs.ksu_type }} == "mksu" ]]; then
-            KSU_TYPENAME="MKSU"
-          else
-            KSU_TYPENAME="KSU"
-          fi
           if [[ "${{ github.event.inputs.lz4kd_enable }}" == "true" ]]; then
             wget https://raw.githubusercontent.com/cctv18/oppo_oplus_realme_sm8750/refs/heads/main/zram.zip
           fi
           if [[ -n "${{ github.event.inputs.kernel_suffix }}" ]]; then
-            zip -r ../AnyKernel3_${KSU_TYPENAME}_${{ env.KSUVER }}_${{ github.event.inputs.kernel_version }}_${{ env.ANDROID_VERSION }}_${{ github.event.inputs.kernel_suffix }}.zip ./*
+            zip -r ../AnyKernel3_${KSU_TYPENAME}_${{ env.KSU_TYPENAME }}_${{ github.event.inputs.kernel_version }}_${{ env.ANDROID_VERSION }}_${{ github.event.inputs.kernel_suffix }}.zip ./*
           else
-            zip -r ../AnyKernel3_${KSU_TYPENAME}_${{ env.KSUVER }}_${{ github.event.inputs.kernel_version }}_${{ env.ANDROID_VERSION }}_${{ env.KERNEL_NAME }}.zip ./*
+            zip -r ../AnyKernel3_${KSU_TYPENAME}_${{ env.KSU_TYPENAME }}_${{ github.event.inputs.kernel_version }}_${{ env.ANDROID_VERSION }}_${{ env.KERNEL_NAME }}.zip ./*
           fi
       
       - name: 上传 Ccache 调试日志
@@ -895,6 +885,16 @@ jobs:
 
       - name: 设置环境变量
         run: |
+          export FULL_KERNEL_VERSION=${{ github.event.inputs.kernel_version }}
+          if [[ -n "${{ github.event.inputs.kernel_suffix }}" ]]; then
+            FULL_VERSION="${{ github.event.inputs.kernel_version }}-${{ github.event.inputs.kernel_suffix }}"
+            echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
+            export FULL_VERSION=$FULL_VERSION
+          else
+            FULL_VERSION="${{ github.event.inputs.kernel_version }}-${{ env.KERNEL_NAME }}"
+            echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
+            export FULL_VERSION=$FULL_VERSION
+          fi
           TIME="$(TZ='Asia/Shanghai' date +'%y%m%d%H%M%S')"
           TIME_FORM="$(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S')"
           echo "TIME=$TIME" >> $GITHUB_ENV
