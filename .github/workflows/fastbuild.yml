@@ -279,7 +279,7 @@ jobs:
             ccache -sv
           fi
       
-      - name: 添加 ${{ env.KSU_TYPE }}
+      - name: 添加 ${{ env.KSU_TYPENAME }}
         if: inputs.ksu_type != 'none'
         id: ksu_version
         run: |
@@ -706,16 +706,16 @@ jobs:
             sudo sed -i 's/-4k/-${{ env.KERNEL_NAME }}/g' ./common/arch/arm64/configs/gki_defconfig
           fi
           sed -i 's/${scm_version}//' ./common/scripts/setlocalversion
-          echo "CONFIG_LOCALVERSION_AUTO=n" >> ./common/arch/arm64/conigs/gki_defconfig
+          echo "CONFIG_LOCALVERSION_AUTO=n" >> ./common/arch/arm64/configs/gki_defconfig
 
       - name: 修复零宽空格越权漏洞
         if: inputs.zwsp_bypass_fix
         run: |
-          echo "正在修复零宽空格越权漏洞…"
           cd kernel_workspace
-          cd common
+          echo "正在修复零宽空格越权漏洞…"
           wget https://github.com/torvalds/linux/commit/91b587ba79e1b68bb718d12b0758dbcdab4e9cb7.patch -O f2fs.patch
-          patch -p1 -N < f2fs.patch || true
+          cd common
+          patch -p1 -N < ../f2fs.patch || true
           sed -i '/ignore_init();/d' fs/unicode/mkutf8data.c
           echo "成功修补相关文件"
           cd fs/unicode
@@ -945,6 +945,7 @@ jobs:
 
     
       
+
 
 
 
