@@ -484,7 +484,7 @@ jobs:
             patch -p1 -N -F 3 < 69_hide_stuff.patch || true
           fi
 
-      - name: \[TEMP\] 修复部分版本源码中 vma 导致的编译错误
+      - name: 修复部分版本源码中 vma 导致的编译错误
         if: inputs.kernel_version != '6.6.89' && inputs.kernel_version != '6.6.66'
         run: |
             cd kernel_workspace/common
@@ -956,3 +956,4 @@ jobs:
           files: |
 
             release_zips/AnyKernel3_*.zip
+
