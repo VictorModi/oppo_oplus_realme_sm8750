@@ -346,7 +346,7 @@ jobs:
             cd ./KernelSU
             GIT_COMMIT_HASH=$(git rev-parse --short=8 HEAD)
             echo "当前提交哈希: $GIT_COMMIT_HASH"
-            export KSU_VERSION=$KSU_VERSION
+            KSU_VERSION=$(expr $(git rev-list --count main) + 37185 2>/dev/null || echo 114514)
             # 尝试最多 3 次获取 KernelSU API 版本号
             for i in {1..3}; do
               # 从远程 Kbuild 中提取 KSU_API_VERSION
@@ -366,7 +366,7 @@ jobs:
             echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
             echo "ksuver=$KSU_VERSION" >> $GITHUB_OUTPUT
             # ReSukiSU 开发团队要求内核版本保留 ReSukiSU 标识，故不作版本号修改
-            echo "SukiSU版本号: v${KSU_API_VERSION}-${GIT_COMMIT_HASH}@ReSukiSU"
+            echo "ReSukiSU版本号: v${KSU_API_VERSION}-${GIT_COMMIT_HASH}@ReSukiSU"
           elif [[ ${{ github.event.inputs.ksu_type }} == "ksunext" ]]; then
             echo "正在配置KernelSU Next..."
             curl -LSs "https://raw.githubusercontent.com/pershoot/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs
@@ -929,7 +929,7 @@ jobs:
             - MKSU管理器下载：[Magic-KernelSU](https://github.com/5ec1cff/KernelSU/actions)
             - KSU原版管理器下载：[KernelSU](https://github.com/tiann/KernelSU/releases)
             ### ⏫️ 更新内容：
-            - 更新${{ needs.build.outputs.ksutype }}至最新版本（${{ needs.build.outputs.ksuver }}）
+            - 更新 ${{ needs.build.outputs.ksutype }} 至最新版本（${{ needs.build.outputs.ksuver }}）
             - (预留)
             ### 📋 安装方法 | Installation Guide
             1. 若你的手机已经安装了第三方Recovery（如TWRP)，可下载对应机型的AnyKernel刷机包后进入Recovery模式，通过Recovery刷入刷机包后重启设备；
@@ -942,3 +942,4 @@ jobs:
           prerelease: false
           files: |
             release_zips/AnyKernel3_*.zip
+
