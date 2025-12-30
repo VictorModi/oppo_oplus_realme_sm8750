@@ -920,19 +920,22 @@ jobs:
           name: "${{ env.TAG_HEAD }}-${{ env.FULL_VERSION }}"
           body: |
             ### 📱 欧加真 ${{ needs.build.outputs.ksutype }} SM8750 通用内核 | 构建信息
-            - 内核版本号: Linux version ${{ github.event.inputs.kernel_version }}
-            - 编译时间: ${{ env.TIME_FORM }}
-            - 机型：${{ needs.build.outputs.kernel_description }}
-            - 特性：${{ needs.build.outputs.ksutype }} + 风驰内核
-            - susfs支持：${{ github.event.inputs.susfs_enable }}
-            - KPM支持 (仅对sukisu生效)：${{ github.event.inputs.kpm_enable }}
-            - LZ4支持：${{ github.event.inputs.lz4_enable }}
-            - LZ4KD支持：${{ github.event.inputs.lz4kd_enable }}
-            - 网络功能增强：${{ github.event.inputs.better_net }}
-            - BBR/Brutal 等拥塞控制算法支持：${{ github.event.inputs.bbr_enable }}
-            - ADIOS IO调度器支持：${{ github.event.inputs.adios_enable }}
-            - Re-Kernel支持：${{ github.event.inputs.rekernel_enable }}
-            - 内核级基带保护支持：${{ github.event.inputs.baseband_guard }}
+            - 内核版本号: `${{ github.event.inputs.kernel_version }}`
+            - 编译时间: `${{ env.TIME_FORM }}`
+            - 机型：`${{ needs.build.outputs.kernel_description }}`
+            - 特性：`${{ needs.build.outputs.ksutype }}` + 风驰内核
+            - susfs支持：`${{ github.event.inputs.susfs_enable }}`
+            - KPM支持 (仅对sukisu生效)：`${{ github.event.inputs.kpm_enable }}`
+            - LZ4支持：`${{ github.event.inputs.lz4_enable }}`
+            - LZ4KD支持：`${{ github.event.inputs.lz4kd_enable }}`
+            - 网络功能增强：`${{ github.event.inputs.better_net }}`
+            - BBR/Brutal 等拥塞控制算法支持：`${{ github.event.inputs.bbr_enable }}`
+            - ADIOS IO调度器支持：`${{ github.event.inputs.adios_enable }}`
+            - Re-Kernel支持：`${{ github.event.inputs.rekernel_enable }}`
+            - 内核级基带保护支持：`${{ github.event.inputs.baseband_guard }}`
+            - 内核构建签名: `${{ github.event.inputs.kernel_buiider }}`
+            - 内核内显时间: `${{ github.event.inputs.kernel_build_time }}`
+            - 零宽空格越权漏洞修复: `${{ github.event.inputs.zwsp_bypass_fix }}`
             - SukiSU Ultra 管理器下载：[SukiSU-Ultra](https://github.com/SukiSU-Ultra/SukiSU-Ultra/releases)
             - ReSukiSU 管理器下载：[ReSukiSU](https://github.com/ReSukiSU/ReSukiSU/releases)
             - KernelSU Next 管理器下载：[KernelSU-Next](https://github.com/KernelSU-Next/KernelSU-Next/releases)
@@ -951,4 +954,5 @@ jobs:
           draft: false
           prerelease: false
           files: |
+
             release_zips/AnyKernel3_*.zip
