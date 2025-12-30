@@ -14,32 +14,32 @@ env:
       },
       "6.6.50": {
         "url": "https://github.com/cctv18/android_kernel_oneplus_mt6991/archive/refs/heads/oneplus/mt6991_v_15.0.2_ace5_ultra.zip",
-        "description": "欧加真天玑9400+通用 6.6.50 内核（基于一加Ace5 Ultra 6.6.50 版官方OKI源码）"
+        "description": "欧加真天玑9400+通用 6.6.50 内核（基于一加Ace5 Ultra 6.6.50 版官方OKI源码）",
         "ccache_restore_key": "ccache-neov4-6.6.50"
       },
       "6.6.56": {
         "url": "https://github.com/cctv18/android_kernel_common_oneplus_sm8750/archive/refs/heads/oneplus/sm8750_v_15.0.2_oneplus_13t.zip",
-        "description": "欧加真骁龙8Elite通用 6.6.56 内核（基于一加13t 6.6.56 版官方OKI源码）"
+        "description": "欧加真骁龙8Elite通用 6.6.56 内核（基于一加13t 6.6.56 版官方OKI源码）",
         "ccache_restore_key": "ccache-neov4-6.6.56"
       },
       "6.6.57": {
         "url": "https://github.com/cctv18/android_kernel_common_oneplus_sm8750/archive/refs/heads/oneplus/sm8750_v_15.0.1_pad_2_pro.zip",
-        "description": "欧加真骁龙8Elite通用 6.6.57 内核（基于一加平板2Pro 6.6.57 版官方OKI源码）"
+        "description": "欧加真骁龙8Elite通用 6.6.57 内核（基于一加平板2Pro 6.6.57 版官方OKI源码）",
         "ccache_restore_key": "ccache-neov4-6.6.57"
       },
       "6.6.66": {
         "url": "https://github.com/cctv18/android_kernel_common_oneplus_sm8750/archive/refs/heads/oneplus/sm8750_v_15.0.2_oneplus_13_6.6.66.zip",
-        "description": "欧加真骁龙8Elite通用 6.6.66 内核（基于一加13 6.6.66 版官方OKI源码）"
+        "description": "欧加真骁龙8Elite通用 6.6.66 内核（基于一加13 6.6.66 版官方OKI源码）",
         "ccache_restore_key": "ccache-neov4-6.6.66"
       },
       "6.6.89": {
         "url": "https://github.com/cctv18/android_kernel_common_oneplus_sm8750/archive/refs/heads/oneplus/sm8750_v_16.0.0_oneplus_13_6.6.89.zip",
-        "description": "欧加真骁龙8Elite通用 6.6.89 内核（基于一加13国际版 6.6.89 版官方OKI源码）"
+        "description": "欧加真骁龙8Elite通用 6.6.89 内核（基于一加13国际版 6.6.89 版官方OKI源码）",
         "ccache_restore_key": "ccache-neov4-6.6.89"
       },
       "6.6.89_mtk": {
         "url": "https://github.com/cctv18/android_kernel_oneplus_mt6991/archive/refs/heads/oneplus/mt6991_v_15.0.2_ace5_ultra_6.6.89.zip",
-        "description": "欧加真天玑9400+通用 6.6.89 内核（基于一加Ace5 Ultra 6.6.89 版官方OKI源码）"
+        "description": "欧加真天玑9400+通用 6.6.89 内核（基于一加Ace5 Ultra 6.6.89 版官方OKI源码）",
         "ccache_restore_key": "ccache-neov4-mtk_6.6.89"
       }
     }
@@ -61,7 +61,7 @@ on:
           - '6.6.89'
           - '6.6.89_mtk'
       ksu_type:
-        description: 'KernelSU 分支( SukiSU Ultra/ReSukiSU/KernelSU Next/MKSU/KernelSU (原版), 默认 ReSukiSU)'
+        description: 'KernelSU 分支( SukiSU Ultra/ReSukiSU/KernelSU (原版)..., 默认 ReSukiSU)'
         required: true
         type: choice
         default: 'resukisu'
@@ -122,7 +122,7 @@ on:
         type: boolean
         default: true
       zwsp_bypass_fix:
-        description: '是否修复零宽空格越权漏洞(方案来自 [aviraxp](https://t.me/newqianzhuang/52?comment=59) 可能会造成文件查找性能下降)'
+        description: '是否修复零宽空格越权漏洞(方案来自 (https://t.me/newqianzhuang/52?comment=59) 可能会造成文件查找性能下降)'
         required: true
         type: boolean
         default: true
@@ -164,7 +164,7 @@ jobs:
           CURRENT_BUILD_HOSTNAME: ""
           CURRENT_BUILD_USERNAME: ""
         run: |
-          sudo apt update && sudo apt-get install -y --no-install-recommends jq
+          # sudo apt update && sudo apt-get install -y --no-install-recommends jq # 好像原本就有jq?
           export KERNEL_VERSION=${{ github.event.inputs.kernel_version }}
           case "$KSU_TYPE" in
             sukisu)   KSU_TYPENAME="SukiSU" ;;
@@ -942,3 +942,4 @@ jobs:
 
     
       
+
