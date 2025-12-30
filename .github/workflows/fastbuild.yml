@@ -105,7 +105,7 @@ on:
         description: '是否开启网络功能拓展配置(用于为ipset及需要iptables等高级网络功能内核支持的程序提供支持)'
         required: true
         type: boolean
-        default: false
+        default: true
       adios_enable:
         description: '是否启用ADIOS IO调度器支持(提升IO读写性能)'
         required: true
@@ -138,12 +138,12 @@ on:
         default: ''
       kernel_buiider:
         description: '内核构建者签名(必须在中间带一个@, 勿加空格等影响指令运行的保留字符, 默认 `kleaf@build-host` 一般没必要修改)'
-        required: false
+        required: true
         type: string
         default: 'kleaf@build-host'
       kernel_build_time:
         description: '内核构建时间(遵循特定格式 `%a %b %d %H:%M:%S %Z %Y` 一般没必要修改)'
-        required: false
+        required: true
         type: string
         default: 'Fri Sep 19 06:13:40 UTC 2025'
 
@@ -945,6 +945,7 @@ jobs:
 
     
       
+
 
 
 
