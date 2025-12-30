@@ -156,10 +156,10 @@ jobs:
       kernel_description: ${{ steps.init.outputs.kernel_description }}
     steps:
       - name: 安装环境依赖+初始化源码仓库及llvm-Clang18工具链 (内核版本 ${{ github.event.inputs.kernel_version }})
+        id: init
         env: 
             KSU_TYPENAME: ${{ github.event.inputs.ksu_type }} # 默认从输入值读取
             CURRENT_CCACHE_RESTORE_KEY: ""
-            CURRENT_KERNEL_URL: ""
             CURRENT_BUILD_HOSTNAME: ""
             CURRENT_BUILD_USERNAME: ""
         run: |
@@ -186,7 +186,6 @@ jobs:
           CURRENT_CCACHE_RESTORE_KEY=$(jq -r --arg ver "$KERNEL_VERSION" '.[$ver].ccache_restore_key' kernel_map.json)
           CURRENT_KERNEL_DESCRIPTION=$(jq -r --arg ver "$KERNEL_VERSION" '.[$ver].description' kernel_map.json)
 
-          echo "CURRENT_KERNEL_URL=$CURRENT_KERNEL_URL" >> $GITHUB_ENV
           echo "CURRENT_CCACHE_RESTORE_KEY=$CURRENT_CCACHE_RESTORE_KEY" >> $GITHUB_ENV
 
           IFS='@' read -r CURRENT_BUILD_USERNAME CURRENT_BUILD_HOSTNAME <<< "${{ github.event.inputs.kernel_buiider }}"
@@ -206,7 +205,7 @@ jobs:
           #sudo apt-get install -y --no-install-recommends curl bison flex make binutils git perl gcc python3 python-is-python3 bc libssl-dev libelf-dev zip unzip ccache
           
           echo "正在克隆源码仓库..."
-          aria2c -s16 -x16 -k1M ${{ env.CURRENT_KERNEL_URL }} -o common.zip && 
+          aria2c -s16 -x16 -k1M $CURRENT_KERNEL_URL -o common.zip && 
           unzip -q common.zip && 
           TOP_DIR="$(unzip -Z -1 common.zip | head -n1 | cut -d/ -f1)" && 
           mv "$TOP_DIR" common && 
@@ -942,4 +941,3 @@ jobs:
           prerelease: false
           files: |
             release_zips/AnyKernel3_*.zip
-
