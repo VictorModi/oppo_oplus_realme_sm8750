@@ -196,6 +196,7 @@ jobs:
 
       - name: 安装环境依赖+初始化源码仓库及llvm-Clang18工具链
         run: |
+          cd kernel_workspace
           sudo apt-mark hold firefox &&
           sudo apt-mark hold libc-bin &&
           sudo apt purge man-db &&
@@ -942,4 +943,5 @@ jobs:
 
     
       
+
 
